@@ -27,19 +27,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Precargar productos si la lista está vacía (evita duplicados si la actividad se recrea)
-        if (listaProductos.isEmpty()) {
-            listaProductos.add(new Producto(101, "Teclado Mecánico RGB", 45000.50));
-            listaProductos.add(new Producto(102, "Mouse Gamer 16000 DPI", 25000.00));
-            listaProductos.add(new Producto(103, "Monitor 24' Full HD", 120000.99));
-        }
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         vm = new ViewModelProvider(this).get(MainViewModel.class);
-
         setSupportActionBar(binding.appBarMain.toolbar);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment_content_main);
@@ -73,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        // Precargar productos si la lista está vacía (evita duplicados si la actividad se recrea)
+        vm.cargarProductos();
         observarEventos();
     }
 
@@ -81,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
             if (evento.obtenerContenidoSiNoSidoManejado() != null) {
                 mostrarDialogoSalir();
             }
+        });
+        vm.getProductosMutable().observe(this, productos -> {
+            listaProductos = productos;
         });
     }
 
